@@ -2,14 +2,14 @@ package com.company;
 
 import java.awt.*;
 
-public class Plant extends EcosystemUnit {
+public class Animal extends EcosystemUnit {
 
     private Color color;
     private String shape;
 
-    public Plant(){
-        this.color = Color.GREEN;
-        this.shape = "p";
+    public Animal(){
+        this.color = Color.ORANGE;
+        this.shape = "a";
     }
 
     @Override

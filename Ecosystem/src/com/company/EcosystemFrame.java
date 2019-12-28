@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class EcosystemFrame extends JFrame {
         private EcosystemModel myModel;
-        private EcosystemPanel myPanel;
+        private DisplayEcosystemField myPanel;
         private static boolean created;
 
         private int frameWidth = 1000;
@@ -28,8 +28,6 @@ public class EcosystemFrame extends JFrame {
                 Dimension dimension = toolkit.getScreenSize();
                 setBounds(dimension.width / 2 - (frameWidth / 2), dimension.height / 2 - (frameHeight / 2), frameWidth, frameHeight);
                 //Frame title name.
-
-
 
         }
 
