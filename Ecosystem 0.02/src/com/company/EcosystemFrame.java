@@ -41,6 +41,8 @@ public class EcosystemFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 dispComp.getModel().step();
+                System.out.println(dispComp.getModel().countOfUnits());
+
                 // method who paint new state of component
                 dispComp.repaint();
             }

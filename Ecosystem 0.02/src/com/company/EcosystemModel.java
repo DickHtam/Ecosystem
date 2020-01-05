@@ -2,7 +2,10 @@ package com.company;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EcosystemModel {
@@ -16,7 +19,6 @@ public class EcosystemModel {
     public enum Direction {
         N, S, W, E
     }
-
     //Size of gird.
     public final static int WIDTH = 20, HEIGHT = 20;
 
@@ -61,7 +63,7 @@ public class EcosystemModel {
 //                        randomW = 7;
 //                        randomH = 6;
             } while (this.gird[getRandomValueInRange(0, WIDTH)][getRandomValueInRange(0, HEIGHT)] != null);
-            this.gird[randomW][randomH] = makeUnit(unit);
+            if(this.gird[randomW][randomH] == null) this.gird[randomW][randomH] = makeUnit(unit); else i--;
 
             Direction d = Direction.N;
             //Fill HashMap info.
@@ -73,26 +75,44 @@ public class EcosystemModel {
 
     //Method which executes of moving for each object in the gird.
     public void step() {
-        //helper variables
-        int n, k;
-        for (int i = 0; i < gird.length; i++) {
-            for (int j = 0; j < gird[0].length; j++) {
-                if (gird[i][j] instanceof Creature) {
-                    if (type(gird[i][j]) == Neighboring.EMPTY) {
-                        info.get(gird[i][j]).point = movePointToAhead(gird[i][j]);
-                        gird[info.get(gird[i][j]).getPoint().x][info.get(gird[i][j]).getPoint().y] = gird[i][j];
-                        n = info.get(gird[i][j]).getPoint().x;
-                        k = info.get(gird[i][j]).getPoint().y;
-                        gird[i][j] = null;
-                        i = n;
-                        j = k;
+        Object[] list = info.keySet().toArray();
+        Point p;
+        Point pH;
 
-                    } else {
-                        info.get(gird[i][j]).direction = rightRotate(info.get(gird[i][j]).direction);
-                    }
-                }
-            }
+        for (int i = 0; i < list.length; i++) {
+            if (type((Creature) list[i]) == Neighboring.EMPTY) {
+                            p = info.get((Creature) list[i]).point;
+                            pH = movePointToAhead((Creature) list[i]);
+                            info.get((Creature) list[i]).point = pH;
+                            gird[pH.x][pH.y] = gird[p.x][p.y];
+                            gird[p.x][p.y] = null;
+                        } else {
+                            info.get(list[i]).direction = rightRotate(info.get(list[i]).direction);
+                        }
+
         }
+
+//        int n = 100, k = 100;
+//        for (int i = 0; i < gird.length; i++) {
+//            for (int j = 0; j < gird[0].length; j++) {
+//                if(n == i && k == j){
+//                    n = 100;
+//                    k = 100;
+//                } else {
+//                    if (gird[i][j] instanceof Creature) {
+//                        if (type(gird[i][j]) == Neighboring.EMPTY) {
+//                            info.get(gird[i][j]).point = movePointToAhead(gird[i][j]);
+//                            gird[info.get(gird[i][j]).getPoint().x][info.get(gird[i][j]).getPoint().y] = gird[i][j];
+//                            n = info.get(gird[i][j]).getPoint().x;
+//                            k = info.get(gird[i][j]).getPoint().y;
+//                            gird[i][j] = null;
+//                        } else {
+//                            info.get(gird[i][j]).direction = rightRotate(info.get(gird[i][j]).direction);
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     //Returns "Point" which contains coordinates "x" and "y", which are coordinates for the next proposed location.
@@ -147,16 +167,15 @@ public class EcosystemModel {
     }
 
 
-    public void printGird() {
-        int n = 1;
-        for (int i = 0; i < this.gird.length; i++) {
-            for (int j = 0; j < this.gird[0].length; j++) {
-                if (gird[i][j] instanceof Creature) {
-                    System.out.println("Creature " + n + ": i = " + i + " j = " + j);
-                    n++;
-                }
+    public static void printGird(Creature[][] c)  {
+        for (int i = 0; i < c.length; i++) {
+            System.out.println();
+            for (int j = 0; j < c[0].length; j++) {
+                System.out.print(c[i][j]);
             }
         }
+
+        System.out.println("\n");
     }
 
     public int countOfUnits() {

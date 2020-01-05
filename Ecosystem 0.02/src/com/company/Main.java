@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 	EcosystemModel ecosystemModel = new EcosystemModel();
-	ecosystemModel.addUnits(50, Creature.class);
+	ecosystemModel.addUnits(100, Creature.class);
 	EcosystemFrame frame = new EcosystemFrame(ecosystemModel);
 
 	frame.start();
