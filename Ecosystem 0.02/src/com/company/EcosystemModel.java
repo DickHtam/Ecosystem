@@ -2,23 +2,20 @@ package com.company;
 
 import java.awt.*;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+
 
 public class EcosystemModel {
 
     //Name of neighboring on the gird.
-    public enum Neighboring {
-        SAME, OTHER, WALL, FOOD, EMPTY
-    }
+//    public enum Creature.Neighboring {
+//        SAME, OTHER, WALL, FOOD, EMPTY
+//    }
 
-    //Direction, this is which direction object will do next step.
-    public enum Direction {
-        N, S, W, E
-    }
+//    //Direction, this is which direction object will do next step.
+//    public enum Creature.Direction {
+//        N, S, W, E, STATIC
+//    }
     //Size of gird.
     public final static int WIDTH = 20, HEIGHT = 20;
 
@@ -26,7 +23,9 @@ public class EcosystemModel {
 
     private HashMap<Creature, PrivateData> info;
 
-    Creature[][] gird;
+    public Creature[][] gird;
+
+    public static int exception = 0;
 
     public EcosystemModel() {
         this.gird = new Creature[WIDTH][HEIGHT];
@@ -36,14 +35,14 @@ public class EcosystemModel {
     //Data about object in the model. (Like direction, coordinates, etc.)
     public class PrivateData {
         public Point point;
-        public Direction direction;
+        public Creature.Direction direction;
 
-        public PrivateData(Point p, Direction d) {
+        public PrivateData(Point p, Creature.Direction d) {
             this.point = p;
             this.direction = d;
         }
 
-        public Direction getDirection() {
+        public Creature.Direction getDirection() {
             return this.direction;
         }
 
@@ -55,17 +54,17 @@ public class EcosystemModel {
     //Add units int model and fill the gird.
     public void addUnits(int numberOfCreature, Class unit) {
         int randomW, randomH;
-        Direction[] directions = Direction.values();
+        Creature.Direction[] directions = Creature.Direction.values();
         for (int i = 0; i < numberOfCreature; i++) {
             do {
-                randomW = getRandomValueInRange(0, WIDTH);
-                randomH = getRandomValueInRange(0, HEIGHT);
+                randomW = HelpMethods.getRandomValueInRange(0, WIDTH);
+                randomH = HelpMethods.getRandomValueInRange(0, HEIGHT);
 //                        randomW = 7;
 //                        randomH = 6;
-            } while (this.gird[getRandomValueInRange(0, WIDTH)][getRandomValueInRange(0, HEIGHT)] != null);
-            if(this.gird[randomW][randomH] == null) this.gird[randomW][randomH] = makeUnit(unit); else i--;
+            } while (gird[HelpMethods.getRandomValueInRange(0, WIDTH)][HelpMethods.getRandomValueInRange(0, HEIGHT)] != null);
+            if(gird[randomW][randomH] == null) gird[randomW][randomH] = makeUnit(unit); else i--;
 
-            Direction d = Direction.N;
+            Creature.Direction d = gird[randomW][randomH].getDirection();
             //Fill HashMap info.
             info.put(this.gird[randomW][randomH], new PrivateData(new Point(randomW, randomH), d));
 
@@ -75,94 +74,76 @@ public class EcosystemModel {
 
     //Method which executes of moving for each object in the gird.
     public void step() {
-        Object[] list = info.keySet().toArray();
+        Object[] array = info.keySet().toArray();
         Point p;
         Point pH;
 
-        for (int i = 0; i < list.length; i++) {
-            if (type((Creature) list[i]) == Neighboring.EMPTY) {
-                            p = info.get((Creature) list[i]).point;
-                            pH = movePointToAhead((Creature) list[i]);
-                            info.get((Creature) list[i]).point = pH;
+        for (int i = 0; i < array.length; i++) {
+            if (typeAhead((Creature) array[i]) == Creature.Neighboring.EMPTY) {
+                            p = info.get((Creature) array[i]).point;
+                            pH = movePointToAhead((Creature) array[i]);
+                            info.get((Creature) array[i]).point = pH;
                             gird[pH.x][pH.y] = gird[p.x][p.y];
                             gird[p.x][p.y] = null;
                         } else {
-                            info.get(list[i]).direction = rightRotate(info.get(list[i]).direction);
+
+                                info.get(array[i]).direction = rightRotate(info.get(array[i]).direction);
+
                         }
-
         }
-
-//        int n = 100, k = 100;
-//        for (int i = 0; i < gird.length; i++) {
-//            for (int j = 0; j < gird[0].length; j++) {
-//                if(n == i && k == j){
-//                    n = 100;
-//                    k = 100;
-//                } else {
-//                    if (gird[i][j] instanceof Creature) {
-//                        if (type(gird[i][j]) == Neighboring.EMPTY) {
-//                            info.get(gird[i][j]).point = movePointToAhead(gird[i][j]);
-//                            gird[info.get(gird[i][j]).getPoint().x][info.get(gird[i][j]).getPoint().y] = gird[i][j];
-//                            n = info.get(gird[i][j]).getPoint().x;
-//                            k = info.get(gird[i][j]).getPoint().y;
-//                            gird[i][j] = null;
-//                        } else {
-//                            info.get(gird[i][j]).direction = rightRotate(info.get(gird[i][j]).direction);
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 
     //Returns "Point" which contains coordinates "x" and "y", which are coordinates for the next proposed location.
-    public Point movePointToAhead(Direction d, Point p) {
-        if (d == Direction.N) return new Point(p.x, p.y - 1);
-        if (d == Direction.E) return new Point(p.x + 1, p.y);
-        if (d == Direction.S) return new Point(p.x, p.y + 1);
-        if (d == Direction.W) return new Point(p.x - 1, p.y);
+    public Point movePointToAhead(Creature.Direction d, Point p) {
+        if (d == Creature.Direction.N) return new Point(p.x, p.y - 1);
+        if (d == Creature.Direction.E) return new Point(p.x + 1, p.y);
+        if (d == Creature.Direction.S) return new Point(p.x, p.y + 1);
+        if (d == Creature.Direction.W) return new Point(p.x - 1, p.y);
         else return p;
     }
 
     public Point movePointToAhead(Creature c) {
-        Direction d = info.get(c).getDirection();
+        Creature.Direction d = info.get(c).getDirection();
         Point p = info.get(c).getPoint();
-        if (d == Direction.N) return new Point(p.x, p.y - 1);
-        if (d == Direction.E) return new Point(p.x + 1, p.y);
-        if (d == Direction.S) return new Point(p.x, p.y + 1);
-        if (d == Direction.W) return new Point(p.x - 1, p.y);
+        if (d == Creature.Direction.N) return new Point(p.x, p.y - 1);
+        if (d == Creature.Direction.E) return new Point(p.x + 1, p.y);
+        if (d == Creature.Direction.S) return new Point(p.x, p.y + 1);
+        if (d == Creature.Direction.W) return new Point(p.x - 1, p.y);
         else return p;
     }
 
     //Returns type of neighboring ahead.
-    private Neighboring type(Creature c) {
+    private Creature.Neighboring typeAhead(Creature c) {
         try {
             return type(c, gird[movePointToAhead(c).x][movePointToAhead(c).y]);
         } catch (ArrayIndexOutOfBoundsException e) {
-            return Neighboring.WALL;
+            return Creature.Neighboring.WALL;
         }
     }
 
     //Returns type of second argument in relation to the first.
-    private Neighboring type(Object obj1, Object obj2) {
+    private Creature.Neighboring type(Object obj1, Object obj2) {
         if (obj2 == null) {
-            return Neighboring.EMPTY;
+            return Creature.Neighboring.EMPTY;
         } else {
             if (obj1.getClass().equals(obj2.getClass())) {
-                return Neighboring.SAME;
-            } else {
-                return Neighboring.OTHER;
+                return Creature.Neighboring.SAME;
+            } else { if(isFood((Creature) obj1, (Creature) obj2)){
+                return Creature.Neighboring.FOOD;
+            }else {
+                return Creature.Neighboring.OTHER;
+            }
             }
         }
     }
 
     //Returns right rotated direction.
-    private Direction rightRotate(Direction d) {
+    private Creature.Direction rightRotate(Creature.Direction d) {
 
-        if (d == Direction.N) return Direction.E;
-        else if (d == Direction.E) return Direction.S;
-        else if (d == Direction.S) return Direction.W;
-        else if (d == Direction.W) return Direction.N;
+        if (d == Creature.Direction.N) return Creature.Direction.E;
+        else if (d == Creature.Direction.E) return Creature.Direction.S;
+        else if (d == Creature.Direction.S) return Creature.Direction.W;
+        else if (d == Creature.Direction.W) return Creature.Direction.N;
         else return d;
     }
 
@@ -190,7 +171,7 @@ public class EcosystemModel {
 
     //Returns this.gird.
     public Creature[][] getGird() {
-        return this.gird;
+        return gird;
     }
 
     //Create new units.
@@ -206,20 +187,25 @@ public class EcosystemModel {
     }
 
     //Returns direction symbol
-    public static String getStringOfDirection(Direction d) {
-        if (d == Direction.N) return "^";
-        else if (d == Direction.E) return ">";
-        else if (d == Direction.S) return "v";
+    public static String getStringOfDirection(Creature.Direction d) {
+        if (d == Creature.Direction.N) return "^";
+        else if (d == Creature.Direction.E) return ">";
+        else if (d == Creature.Direction.S) return "v";
         else return "<";
 
     }
 
     public HashMap<Creature, PrivateData> getInfo() {
-        return this.info;
+        return info;
     }
 
-    //Create random int in range.
-    public static int getRandomValueInRange(int from, int to) {
-        return ThreadLocalRandom.current().nextInt(from, to);
+    private boolean isFood(Creature obj1, Creature obj2){
+        if(obj1.getPlaceInFoodChain().getCode() > obj2.getPlaceInFoodChain().getCode()){
+            return true;
+        } else {
+            return false;
+        }
     }
+
+
 }

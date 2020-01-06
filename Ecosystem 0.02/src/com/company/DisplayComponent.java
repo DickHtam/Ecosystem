@@ -50,10 +50,14 @@ public class DisplayComponent extends JComponent {
                 if(modelToDisplay.getGird()[i][j] instanceof Creature) {
                     //Set color for each unit.
                     g2.setColor(modelToDisplay.getGird()[i][j].getColor());
-                    g2.drawString(EcosystemModel.getStringOfDirection(getModel().getInfo().
-                                    get(getModel().getGird()[i][j]).getDirection()),
-                            beginningCoordinateI + 7 + (i * 30),
-                            beginningCoordinateI1 + 28 + (j * 30));
+                    try {
+                        g2.drawString(EcosystemModel.getStringOfDirection(getModel().getInfo().
+                                        get(getModel().getGird()[i][j]).getDirection()),
+                                beginningCoordinateI + 7 + (i * 30),
+                                beginningCoordinateI1 + 28 + (j * 30));
+                    } catch (NullPointerException n){
+                        System.out.println("Exception in DisplayComponent");
+                    }
                 }
             }
         }

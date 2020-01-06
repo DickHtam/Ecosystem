@@ -1,6 +1,7 @@
 package com.company;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,19 +37,23 @@ public class EcosystemFrame extends JFrame {
     public void panel(){
         JPanel p = new JPanel();
 
+
+        JLabel label = new JLabel("Quantity: " + dispComp.getModel().countOfUnits());
+
         JButton buttonStep = new JButton("step");
         buttonStep.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
+                label.setText("Quantity: " + dispComp.getModel().countOfUnits() + " Exceptions: " + EcosystemModel.exception);
                 dispComp.getModel().step();
-                System.out.println(dispComp.getModel().countOfUnits());
-
                 // method who paint new state of component
                 dispComp.repaint();
+
             }
         });
+        p.add(label);
         p.add(buttonStep);
-        add(p, BorderLayout.SOUTH);
+
 
         JButton buttonCheckQuantity = new JButton("push");
         buttonCheckQuantity.addActionListener(new ActionListener() {
@@ -67,7 +72,7 @@ public class EcosystemFrame extends JFrame {
             }
         });
         p.add(buttonCheckQuantity);
-        add(p, BorderLayout.SOUTH);
+        add(p, BorderLayout.EAST);
     }
 
     public void start(){

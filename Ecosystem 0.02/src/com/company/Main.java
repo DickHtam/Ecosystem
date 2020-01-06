@@ -9,18 +9,12 @@ public class Main {
 
     public static void main(String[] args) {
 	EcosystemModel ecosystemModel = new EcosystemModel();
-	ecosystemModel.addUnits(100, Creature.class);
+	ecosystemModel.addUnits(10, Predator.class);
+	ecosystemModel.addUnits(10, Herbivore.class);
+	ecosystemModel.addUnits(10, Plant.class);
 	EcosystemFrame frame = new EcosystemFrame(ecosystemModel);
 
 	frame.start();
 
-//		for (int i = 0; i < ecosystemModel.gird.length; i++) {
-//			System.out.println();
-//			for (int j = 0; j < ecosystemModel.gird.length; j++) {
-//				System.out.print(ecosystemModel.getGird()[j][i] + " | ");
-//
-//			}
-//
-//		}
     }
 }
